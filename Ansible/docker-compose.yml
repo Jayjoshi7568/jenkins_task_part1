@@ -1,0 +1,6 @@
+services:
+  my-app:
+    image: my-image
+    ports:
+      - 80:80
+    container_name: "my-app"
