@@ -1,5 +1,5 @@
 resource "aws_security_group" "sg" {
-  vpc_id = data.aws_vpc.my-vpc.id
+  vpc_id = module.vpc.vpc_id
   egress {
     from_port   = 0
     to_port     = 0
@@ -34,11 +34,12 @@ resource "aws_security_group" "public_sg" {
   }
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = var.ssh_cidr_blocks
   }
+
 
   tags = {
     Name = var.public_sg_name
