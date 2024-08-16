@@ -52,10 +52,10 @@ pipeline{
                 script {
                     // Create the inventory file with the public IP
                     def inventoryContent = """
-                    [slave]
+                    [servers]
                     config_server ansible_host=${env.PUBLIC_IP}
 
-                    [slave:vars]
+                    [servers:vars]
                     ansible_user=ubuntu
                     ansible_ssh_private_key_file=/Users/apple/code/tasks/my-key.pem
                     """
