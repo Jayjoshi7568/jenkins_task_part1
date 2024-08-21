@@ -41,9 +41,10 @@ pipeline{
         stage('Retrieve Public IP') {
             steps {
                 script {
-                    def Ips = sh(script: 'cd Terraform; terraform output -raw public-ip', returnStdout: true).split()
-                    env.PUBLIC_IP = Ips[0]
-                    env.PRIVATE_IP = Ips[1]
+                    def public_Ip = sh(script: 'cd Terraform; terraform output -raw public-ip', returnStdout: true).trim()
+                    def private_Ip = sh(script: 'cd Terraform; terraform output -raw private-ip', returnStdout: true).trim()
+                    env.PUBLIC_IP = public_Ip
+                    env.PRIVATE_IP = private_Ip
                 }
             }
         }
