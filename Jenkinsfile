@@ -41,8 +41,9 @@ pipeline{
         stage('Retrieve Public IP') {
             steps {
                 script {
-                    def publicIp = sh(script: 'cd Terraform; terraform output -raw public-ip', returnStdout: true).trim()
-                    env.PUBLIC_IP = publicIp
+                    def Ips = sh(script: 'cd Terraform; terraform output -raw public-ip', returnStdout: true).split()
+                    env.PUBLIC_IP = Ips[0]
+                    env.PRIVATE_IP = Ips[1]
                 }
             }
         }
@@ -52,12 +53,13 @@ pipeline{
                 script {
                     // Create the inventory file with the public IP
                     def inventoryContent = """
-                    [servers]
-                    config_server ansible_host=${env.PUBLIC_IP}
-
-                    [servers:vars]
+                    [internal]
+                    server2 ansible_host=${env.PRIVATE_IP}
+                    
+                    [internal:vars]
                     ansible_user=ubuntu
                     ansible_ssh_private_key_file=/Users/apple/code/tasks/my-key.pem
+                    ansible_ssh_common_args='-o ProxyCommand="ssh -i /Users/apple/code/tasks/my-key.pem -W %h:%p ubuntu@${env.PUBLIC_IP}"'
                     """
                     // Write the inventory file
                     writeFile file: 'Ansible/inventory.ini', text: inventoryContent

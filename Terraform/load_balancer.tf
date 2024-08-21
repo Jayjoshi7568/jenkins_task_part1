@@ -7,7 +7,6 @@ resource "aws_lb" "app" {
   depends_on = [ aws_security_group.sg ]
 }
 
-
 resource "aws_lb_listener" "http-listener" {
   load_balancer_arn = aws_lb.app.arn
   port              = 80
@@ -18,7 +17,7 @@ resource "aws_lb_listener" "http-listener" {
 
     redirect {
       port        = "443"
-      protocol    = "HTTPS"
+      protocol    = "HTTP"
       status_code = "HTTP_301"
     }
   }
@@ -33,9 +32,9 @@ resource "aws_lb_target_group" "target-group" {
 
 resource "aws_lb_target_group_attachment" "jenkins-server" {
   target_group_arn = aws_lb_target_group.target-group.arn
-  target_id        = aws_instance.public.id
+  target_id        = aws_instance.private.id
   port             = 8080
-  depends_on = [ aws_instance.public ]
+  depends_on = [ aws_instance.private ]
 }
 
 resource "aws_lb_listener" "https-listener" {

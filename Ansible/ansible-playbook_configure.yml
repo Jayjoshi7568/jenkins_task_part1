@@ -1,11 +1,11 @@
 ---
 - name: Install Docker and Jenkins
-  hosts: servers
+  hosts: internal
   become: yes
 
   vars:
     java_package: "openjdk-11-jdk"
-    jenkins_repo_url: "https://pkg.jenkins.io/debian-stable/jenkins.io.key"
+    jenkins_repo_url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key"
 
   tasks:
     - name: Install prerequisites for Docker
@@ -52,36 +52,30 @@
         enabled: yes
 
     ######### Jenkins installation #########
-
-    - name: Download Jenkins GPG key
-      apt_key:
-        url: "{{ jenkins_repo_url }}"
-        state: present
-      when: ansible_facts['os_family'] == "Debian"
-
-    - name: Add Jenkins repository
-      apt_repository:
-        repo: deb https://pkg.jenkins.io/debian-stable binary/
-        state: present
-      when: ansible_facts['os_family'] == "Debian"
-
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        state: latest
-      when: ansible_facts['os_family'] == "Debian"
-
     - name: Install Java
       apt:
         name: "{{ java_package }}"
         state: present
       when: ansible_facts['os_family'] == "Debian"
 
+    - name: Add Jenkins repository key
+      apt_key:
+        url: "{{ jenkins_repo_url }}"
+        state: present
+
+    - name: Add Jenkins repository
+      apt_repository:
+        repo: deb http://pkg.jenkins.io/debian-stable binary/
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
     - name: Install Jenkins
       apt:
         name: jenkins
-        state: latest
-      when: ansible_facts['os_family'] == "Debian"
+        state: present
 
     - name: Start Jenkins
       service:
@@ -89,11 +83,10 @@
         state: started
         enabled: yes
       when: ansible_facts['os_family'] == "Debian"
-
-
+      
 #######  copy docker compose fikle to server ##########
 
     - name: copy compose to server
       copy:
-        src: $pwd/docker-compose.yml
-        dest: /home/ubnutu
+        src: /Users/apple/code/tasks/Jenkins/Task_02/part_1/Ansible/docker-compose.yml
+        dest: /home/ubuntu/docker-compose.yml

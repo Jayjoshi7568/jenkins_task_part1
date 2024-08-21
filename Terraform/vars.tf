@@ -56,7 +56,7 @@ variable "ami_id" {
 variable "instance_type" {
   description = "The type of the EC2 instance"
   type        = string
-  default     = "t3.micro"
+  default     = "t3.medium"
 }
 
 variable "key_name" {
@@ -70,5 +70,13 @@ variable "instance_tags_1" {
   type        = map(string)
   default = {
     Name = "jenkins_public"
+  }
+}
+
+variable "instance_tags_2" {
+  description = "Tags to apply to the EC2 instance"
+  type        = map(string)
+  default = {
+    Name = "jenkins_private"
   }
 }
